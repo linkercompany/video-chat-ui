@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body{
+    overflow: hidden;
+   height: 100%;
+   width: 100%;
+  
+}
+
+.box-container::-webkit-scrollbar{
+    width: 0 !important;
+}
+
+.videogrid{
+    grid-template-columns: repeat(auto-fit , minmax(0rem,30rem)) !important;
+}
