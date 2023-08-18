@@ -4,6 +4,11 @@ import io from 'socket.io-client'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const Meet = () => {
+  const [shouldReload, setShouldReload] = useState(true)
+  const [renderCount, setRenderCount] = useState(0)
+  const [callList, setCallList] = useState([])
+  const [answerList, setAnswerList] = useState([])
+
   const socket = io('https://zoom-backend-b2ys.onrender.com/')
   // const socket = io('http://localhost:5001')
   const { name } = useParams()
@@ -21,8 +26,28 @@ const Meet = () => {
   const navigate = useNavigate()
 
   var myvideoStrm
-  const callList = []
-  const answerList = []
+  // const callList = []
+  // const answerList = []
+
+  // useEffect(() => {
+  //   if (shouldReload) {
+  //     const timer = setTimeout(() => {
+  //       window.location.reload()
+  //     }, 5000)
+
+  //     return () => clearTimeout(timer)
+  //   }
+  // }, [shouldReload])
+
+  useEffect(() => {
+    const debouncedRender = setTimeout(() => {
+      setRenderCount((prevCount) => prevCount + 1)
+    }, 5000)
+
+    return () => {
+      clearTimeout(debouncedRender)
+    }
+  }, [renderCount])
 
   // create the video box
   const append = (video, stream, name) => {
@@ -76,6 +101,7 @@ const Meet = () => {
       callRef.current = call
       console.log('call', call)
       answerList.push({ call })
+      setAnswerList(answerList)
     })
   })
 
@@ -100,10 +126,12 @@ const Meet = () => {
       console.log(callList[index].call)
       callList[index].call.close()
       callList.splice(index, 1)
+      setCallList(callList)
     }
     if (index2 > -1) {
       answerList[index2].call.close()
       answerList.splice(index2, 1)
+      setAnswerList(answerList)
     }
   })
 
@@ -121,6 +149,7 @@ const Meet = () => {
     })
     // if (callList.filter((object) => object.peer === myvideoStrm)) return
     callList.push({ id, call }) // add in call list
+    setCallList(callList)
   }
 
   // remove the blank box in case of there present
