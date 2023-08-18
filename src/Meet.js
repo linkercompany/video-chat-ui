@@ -66,6 +66,7 @@ const Meet = () => {
       const video = document.createElement('video')
       call.on('stream', (remote) => {
         console.log(remote.getVideoTracks()[0].enabled)
+        console.log(remote)
         append(video, remote, username)
       })
       call.on('close', () => {
@@ -80,12 +81,12 @@ const Meet = () => {
 
   socket.on('user-connect', (id, size, username) => {
     // console.log(`new user : ${id}`);
-    console.log('new user')
+    // console.log('new user')
     const found = callList.some((el) => el.id === id)
     // check the user is already in call or not
-    // if (!found) {
-    call(id, username, myvideoStrm)
-    // }
+    if (!found) {
+      call(id, username, myvideoStrm)
+    }
     socket.emit('tellname', name, id)
   })
 
@@ -118,6 +119,7 @@ const Meet = () => {
       video.remove()
       RemoveUnusedDivs()
     })
+    // if (callList.filter((object) => object.peer === myvideoStrm)) return
     callList.push({ id, call }) // add in call list
   }
 
@@ -132,35 +134,6 @@ const Meet = () => {
     }
   }
 
-  // video off/on
-  const VideoControl = () => {
-    const enable = media.getVideoTracks()[0].enabled
-    if (enable) {
-      // If Video on
-      media.getVideoTracks()[0].enabled = false // Turn off
-      document.getElementById('video').style.color = 'red' // Change Color
-    } else {
-      document.getElementById('video').style.color = 'black' // Change Color
-      media.getVideoTracks()[0].enabled = true // Turn On
-    }
-    // ===== another way to do above process ===== //
-    // myvideoStrm.getVideoTracks()[0].enabled = !(myvideoStrm.getVideoTracks()[0].enabled);
-  }
-
-  // mute and unmute function
-  const muteUnmute = () => {
-    // Mute Audio
-    const enabled = media.getAudioTracks()[0].enabled // Audio tracks are those tracks whose kind property is audio. Chck if array in empty or not
-    if (enabled) {
-      // If not Mute
-      media.getAudioTracks()[0].enabled = false // Mute
-      document.getElementById('audio').style.color = 'red'
-    } else {
-      media.getAudioTracks()[0].enabled = true // UnMute
-      document.getElementById('audio').style.color = 'black'
-    }
-  }
-
   // ending a call
   const leave = async () => {
     socket.emit('user-left', ids, room)
@@ -168,15 +141,6 @@ const Meet = () => {
       track.stop()
     })
     window.location.replace('http://localhost:3000/')
-  }
-
-  // function for invite the people
-  const invite = () => {
-    navigator.clipboard.writeText(room)
-    alertbox.current.style.display = 'block'
-    setTimeout(() => {
-      alertbox.current.style.display = 'none'
-    }, 3000)
   }
 
   return (
