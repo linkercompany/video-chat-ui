@@ -56,6 +56,12 @@ const Meet = () => {
         myvideo.current.srcObject = strm
       }
     })
+
+    const timer = setTimeout(() => {
+      window.location.reload()
+    }, 5000)
+
+    return () => clearTimeout(timer)
   }, [])
 
   // answering the call
