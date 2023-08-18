@@ -73,6 +73,7 @@ const Meet = () => {
         RemoveUnusedDivs()
       })
       callRef.current = call
+      console.log('call', call)
       answerList.push({ call })
     })
   })
@@ -82,9 +83,9 @@ const Meet = () => {
     console.log('new user')
     const found = callList.some((el) => el.id === id)
     // check the user is already in call or not
-    if (!found) {
-      call(id, username, myvideoStrm)
-    }
+    // if (!found) {
+    call(id, username, myvideoStrm)
+    // }
     socket.emit('tellname', name, id)
   })
 
