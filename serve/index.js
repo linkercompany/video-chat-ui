@@ -1,19 +1,22 @@
-const express = require('express') // Http server
-const dotenv = require('dotenv') // Dotenv
-// const morgan = require("morgan");
+const express = require('express')
+const dotenv = require('dotenv')
+const path = require('path') // path modülünü ekledik
 
-// Initilaziation
 const app = express()
 dotenv.config()
 
 app.set('trust proxy', 'loopback')
-// app.use(morgan("combined"));
 
 // Public
 app.use(express.static('public'))
-app.use('/*', (_, res) => {
+
+// Tüm istekleri yönlendir
+app.get('/*', (_, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
 
-// Start server and listen for requests
-app.listen(process.env.PORT)
+// Server'ı başlat ve istekleri dinle
+const PORT = process.env.PORT || 8000 // Varsayılan olarak 8000 portunu kullan
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`)
+})
